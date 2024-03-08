@@ -1,20 +1,7 @@
 var outerTextValue;
 
-function isQlikCDNRequestSuccessful() {
-    var resources = window.performance.getEntriesByType("resource");
-
-    //Finding .js files from QlikCloud CDN
-    var qlikCDNResources = resources.filter(function(resource) {
-        return resource.name.includes("qlikcloud.com") && resource.initiatorType === "script";
-    });
-
-    if (qlikCDNResources.length > 0) {
-        return qlikCDNResources.some(function(resource) {
-            return resource.duration > 0;
-        });
-    } else {
-        return false;
-    }
+function isQlikDivPresent() {
+    return document.querySelector('.qv-object-content-container') !== null;
 }
 
 document.addEventListener('focus', handleFocusChange, true);
@@ -33,9 +20,9 @@ document.addEventListener("keydown", function(e) {
     var key = e.key;
     var ctrl = e.ctrlKey;
 
-    if (isQlikCDNRequestSuccessful() && key === "c" && ctrl) {
+    if (isQlikDivPresent() && key === "c" && ctrl) {
         navigator.clipboard.writeText(outerTextValue);
-    } else if (!isQlikCDNRequestSuccessful() && key === "c" && ctrl) {
-        console.log('one-qlik-less tried to copy something but the window is not in a Qlik environment')
+    } else if (!isQlikDivPresent() && key === "c" && ctrl) {
+        console.log('one-qlik-less tried to CTRL + C something but no valid qv-object was found.');
     }
 }, false);
